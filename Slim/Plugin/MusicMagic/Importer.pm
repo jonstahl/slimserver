@@ -11,6 +11,7 @@ use strict;
 
 use File::Spec::Functions qw(:ALL);
 use LWP::UserAgent;
+use URI::Escape qw(uri_escape);
 use Scalar::Util qw(blessed);
 use Socket qw($LF);
 
@@ -294,7 +295,8 @@ sub exportSongs {
 			# Convert $track->url to a path and call MusicIP
 			my $path = Slim::Utils::Misc::pathFromFileURL($trackurl);
 
-			my $pathEnc = Slim::Plugin::MusicMagic::Common::escape($path);
+			# pathFromFileURL returns raw UTF-8 bytes - escape those as they are, uri_escape_utf8 would encode them twice
+			my $pathEnc = uri_escape($path);
 
 			# Set musicmagic_mixable on $track object and call $track->update to actually store it.
 			my $result = get("http://localhost:$MMSport/api/status?song=$pathEnc");

@@ -11,7 +11,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 use LWP::UserAgent;
-use URI::Escape qw(uri_escape_utf8);
+use URI::Escape qw(uri_escape);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
@@ -1437,7 +1437,8 @@ sub checkSingleTrack {
 	Slim::Plugin::MusicMagic::Importer->initPlugin();
 
 	my $path   = Slim::Utils::Misc::pathFromFileURL($url);
-	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape_utf8($path);
+	# pathFromFileURL returns raw UTF-8 bytes - escape those as they are, uri_escape_utf8 would encode them twice
+	my $apiurl = "http://localhost:$MMSport/api/getSong?file=" . uri_escape($path);
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
